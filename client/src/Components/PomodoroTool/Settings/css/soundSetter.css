@@ -1,0 +1,57 @@
+.settings-sound {
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.sound-prev-arrow,
+.sound-next-arrow {
+  font-size: .8em;
+  color: var(--black);
+  transition: color .3s;
+}
+.sound-prev-arrow:hover,
+.sound-next-arrow:hover {
+  cursor: pointer;
+}
+
+.settings-sound .sound-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--medgrey);
+  padding: 2px;
+  width: 1em;
+  height: 100%;
+  border-radius: 100%;
+  position: absolute;
+  left: 5em;
+}
+
+.settings-sound .sound-icon:hover {
+  cursor: pointer;
+}
+
+.settings-sound i {
+  font-size: .7em;
+  color: var(--grey);
+  transition: .3s;
+}
+.settings-sound .sound-icon:hover i {
+  color: var(--black);
+}
+
+.settings-sound ul {
+  margin: 0;
+  padding: 0;
+}
+
+.settings-sound ul li {
+  list-style: none;
+  text-align: center;
+  transition: .2s;
+}
+
+.sound-hidden {
+  display: none;
+}
