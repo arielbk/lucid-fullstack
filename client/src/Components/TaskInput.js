@@ -1,25 +1,16 @@
 import React, { Component } from 'react';
-import './css/taskinput.css';
+import styled from 'styled-components';
 
-class TaskInput extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputValue: '',
-    }
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
-  } 
-
-  componentDidMount() {
-    this.refs.input.focus();
+export default class TaskInput extends Component {
+  state = {
+    inputValue: '',
   }
 
-  handleInputChange(e) {
+  handleInputChange = (e) => {
     this.setState({ inputValue: e.target.value });
   }
 
-  handleBlur() {
+  handleBlur = () => {
     this.setState({ inputValue: '' });
   }
 
@@ -28,9 +19,32 @@ class TaskInput extends Component {
         this.setState({ inputValue: '' })
         this.props.onAddTask(e, this.state.inputValue);
       }}>
-        <input onChange={this.handleInputChange} onBlur={this.handleBlur} value={this.state.inputValue} ref='input' className='main-input' autoFocus placeholder="Add Task" />
+        <MainInput 
+          onChange={this.handleInputChange} 
+          onBlur={this.handleBlur} 
+          value={this.state.inputValue} 
+          autoFocus 
+          placeholder="Add Task" 
+        />
       </form>
     )}
 }
 
-export default TaskInput;
+const MainInput = styled.input`
+  width: 100%;
+  border: none;
+  font-size: 1.2em;
+  margin-bottom: 2.2em;
+  border-bottom: 3px solid #fff;
+  padding: .5em 1em;
+  background: var(--lightgrey);
+  border-radius: 6px;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-bottom: 3px solid var(--babyblue);
+    background: #fff;
+    border-radius: 0;
+  }
+`;

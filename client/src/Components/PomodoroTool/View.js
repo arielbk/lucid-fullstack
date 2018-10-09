@@ -5,11 +5,12 @@ import Counters from './Counters';
 import Progress from './Progress';
 import TimerTitles from './TimerTitles';
 import Settings from './Settings';
+import styled from 'styled-components';
 import '../css/tools.css';
 import './css/view.css';
 
 // view controller for pomodoro component
-class View extends Component {
+export default class View extends Component {
 
   componentDidMount() {
     setTimeout(() => {
@@ -42,7 +43,7 @@ class View extends Component {
     {/* CONTENT WHEN SETTINGS ARE NOT SHOWN */}
     {!this.props.showSettings ? (
       <div>
-      <div className='flex-line'>
+      <FlexLine>
         <PlayPause 
           changeState={this.props.changeState}
           activeTimer={this.props.activeTimer}
@@ -65,7 +66,7 @@ class View extends Component {
           pomodoros={this.props.pomodoros}
           estimate={this.props.estimate}
         />
-      </div>
+      </FlexLine>
 
       <Progress 
         styles={this.props.styles}
@@ -103,4 +104,10 @@ class View extends Component {
     </div>
   )}
 }
-export default View;
+
+const FlexLine = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  width: 100%;
+`;

@@ -8,106 +8,91 @@ import Triumph from './Sounds/triumph.mp3';
 import LevelUp from './Sounds/levelup.mp3';
 import Winning from './Sounds/winning.mp3';
 
-class PomodoroTool extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeTimer: {
-        name: 'work',
-        timeRemaining: 1500000, // ms remaining
-        duration: 1500000, // total timer duration in ms
-        paused: true,
-        untilTime: 0,
-        intervalID: 0,
-        progressPercent: 0,
+export default class PomodoroTool extends Component {
+  state = {
+    activeTimer: {
+      name: 'work',
+      timeRemaining: 1500000, // ms remaining
+      duration: 1500000, // total timer duration in ms
+      paused: true,
+      untilTime: 0,
+      intervalID: 0,
+      progressPercent: 0,
+    },
+
+    showSettings: false,
+
+    // helps with the settings incrementors/decrementors that fire while the mouse is down
+    mouseDown: false,
+
+    // pomodoros completed, pomodoro estimate, pomodoros between each long break
+    pomodoros: 0,
+    estimate: 8,
+    pomodoroSet: 4,
+
+    // sound names to assign to a timer
+    sounds: [
+      'Bell',
+      'Triumph',
+      'LevelUp',
+      'Winning',
+    ],
+
+    // WORK TIMER
+    work: {
+      name: 'work',
+      duration: 1500000, // mseconds - 25 min default
+      sound: 'Triumph',
+    },
+
+    // BREAK TIMER
+    break: {
+      name: 'break',
+      duration: 300000, // mseconds - 5 min default
+      sound: 'Bell',
+    },
+
+    // LONG BREAK TIMER
+    longBreak: {
+      name: 'longBreak',
+      duration: 900000, // mseconds - 15 min default
+      sound: 'Winning'
+    },
+
+    // SHIFT TO STYLED COMPONENTS?
+    styles: {
+      // for the play and pause inner icon and the minutes remaining display
+      font: {
+        color: 'var(--darkblue)',
       },
-
-      showSettings: false,
-
-      // helps with the settings incrementors/decrementors that fire while the mouse is down
-      mouseDown: false,
-
-      // pomodoros completed, pomodoro estimate, pomodoros between each long break
-      pomodoros: 0,
-      estimate: 8,
-      pomodoroSet: 4,
-
-      // sound names to assign to a timer
-      sounds: [
-        'Bell',
-        'Triumph',
-        'LevelUp',
-        'Winning',
-      ],
-
-      // WORK TIMER
-      work: {
-        name: 'work',
-        duration: 1500000, // mseconds - 25 min default
-        sound: 'Triumph',
+      // used for the progress bar background
+      background: {
+        background: 'var(--lightblue)',
       },
-
-      // BREAK TIMER
-      break: {
-        name: 'break',
-        duration: 300000, // mseconds - 5 min default
-        sound: 'Bell',
-      },
-
-      // LONG BREAK TIMER
-      longBreak: {
-        name: 'longBreak',
-        duration: 900000, // mseconds - 15 min default
-        sound: 'Winning'
-      },
-
-      // SHIFT TO STYLED COMPONENTS?
-      styles: {
-        // for the play and pause inner icon and the minutes remaining display
-        font: {
+      titles: {
+        workTitle: {
           color: 'var(--darkblue)',
+          borderBottom: '6px solid var(--darkblue)',
         },
-        // used for the progress bar background
-        background: {
-          background: 'var(--lightblue)',
+        breakTitle: {
+          color: '',
+          borderBottom: '',
         },
-        titles: {
-          workTitle: {
-            color: 'var(--darkblue)',
-            borderBottom: '6px solid var(--darkblue)',
-          },
-          breakTitle: {
-            color: '',
-            borderBottom: '',
-          },
-          longBreakTitle: {
-            color: '',
-            borderBottom: '',
-          }
+        longBreakTitle: {
+          color: '',
+          borderBottom: '',
         }
-      },
-    }
-
-  // -----------------------------------------------------------------------------------------
-  //                                                                        `this` BINDINGS
-  // -----------------------------------------------------------------------------------------
-
-    this.setMouseDown = this.setMouseDown.bind(this);
-    this.setMouseUp = this.setMouseUp.bind(this);
-    this.timerFunc = this.timerFunc.bind(this);
-    this.onTimerEnd = this.onTimerEnd.bind(this);
-    this.timerStyler = this.timerStyler.bind(this);
-    this.changeState = this.changeState.bind(this);
-    this.handleSampleSound = this.handleSampleSound.bind(this);
+      }
+    },
   }
 
   // -----------------------------------------------------------------------------------------
   //                                                                      LIFE CYCLE EVENTS
   // -----------------------------------------------------------------------------------------
-  setMouseDown() {
+  setMouseDown = () => {
     this.setState({ mouseDown:true });
   }
-  setMouseUp() {
+  setMouseUp = () => {
     this.setState({ mouseDown:false });
   }
 
@@ -117,7 +102,7 @@ class PomodoroTool extends Component {
     document.addEventListener('mouseup', this.setMouseUp);
 
     // save settings for this particular pomodoro in local storage
-    // pause pomodoro (navigating away will stop any timer functions)
+    // and pause pomodoro (navigating away will stop any timer functions)
     if (localStorage[this.props.thisTool.id]) {
       const state = JSON.parse(localStorage.getItem(this.props.thisTool.id));
       state.activeTimer.paused = true;
@@ -143,7 +128,7 @@ class PomodoroTool extends Component {
   // -----------------------------------------------------------------------------------------
 
   // timer function called every second while timer is on
-  timerFunc() {
+  timerFunc = () => {
     const timer = {...this.state.activeTimer};
 
     // if timer ends
@@ -160,7 +145,7 @@ class PomodoroTool extends Component {
     this.setState({ activeTimer: timer }) 
   }
 
-  onTimerEnd() {
+  onTimerEnd = () => {
     let activeTimer = {...this.state.activeTimer};
     clearInterval(activeTimer.intervalID);
 
@@ -187,7 +172,7 @@ class PomodoroTool extends Component {
     this.setState({ activeTimer }, this.timerStyler);
   };
 
-  timerStyler() {
+  timerStyler = () => {
 
     const styles = JSON.parse(JSON.stringify(this.state.styles)); // deep clone
     const timerName = this.state.activeTimer.name;
@@ -224,12 +209,12 @@ class PomodoroTool extends Component {
     this.setState({ styles });
   }
 
-  handleSampleSound(timer) {
+  handleSampleSound = (timer) => {
     const sound = this.state[timer].sound;
     this.refs[sound].play();
   }
 
-  changeState(args) {
+  changeState = (args) => {
     this.setState({...args}, () => args.activeTimer ? this.timerStyler() : '');
     // this will also check the styles if the active timer is interacted with...
   }
@@ -252,5 +237,3 @@ class PomodoroTool extends Component {
     );
   }
 }
-
-export default PomodoroTool;

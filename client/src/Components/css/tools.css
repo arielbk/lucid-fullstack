@@ -1,4 +1,5 @@
-/* the topmost css file - defines global styling for Pomodoro component */
+/* ONLY THE POMODORO COMPONENT RELIES ON THIS NOW (OTHER TOOL/NOTE TOOL HAS BEEN SHIFTED TO STYLED-COMPONENTS */
+
 .tool-container {
   /* display: flex;
   justify-content: space-around;
@@ -39,21 +40,6 @@
   opacity: .6;
 }
 
-.tool-close {
-  position: absolute;
-  top: .8em;
-  right: .4em;
-  background: var(--lightgrey);
-  font-size: .8em;
-  padding: .2em .6em;
-  transition: background .3s;
-}
-
-.tool-close:hover {
-  cursor: pointer;
-  background: #f00;
-  color: #fff;
-}
 .flex-line {
   display: flex;
   justify-content: space-around;

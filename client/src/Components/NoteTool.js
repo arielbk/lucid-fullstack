@@ -1,57 +1,56 @@
 import React, { Component } from 'react';
-import './css/tools.css';
-import './css/notetool.css';
+import { ToolContainer, DeleteButton } from './tool';
+import styled from 'styled-components';
 
-class NoteTool extends Component {
+export default class NoteTool extends Component {
   constructor(props) {
     super(props);
     this.state = {
       input: '',
     }
 
-    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.refs.container.style.maxHeight = '14em';
-      this.refs.container.style.opacity = 1;
-      this.refs.container.style.marginBottom = '2em';
-      this.refs.container.style.padding = '1.5em 1em';
-    }, 0);
-
-    // save settings for this particular note in local storage
-    if (localStorage[this.props.thisTool.id]) {
-      this.setState(JSON.parse(localStorage.getItem(this.props.thisTool.id)));
-    }
-  }
-
-  componentDidUpdate() {
-    // update local storage state when component is updated
-    localStorage.setItem(this.props.thisTool.id, JSON.stringify(this.state));
-  }
-
-  handleInputChange() {
+  handleInputChange = () => {
     this.setState({ input: this.refs.noteInput.value });
   }
 
   render() {
     return (
-      <div ref='container' className='tool-container'>
+      <ToolContainer>
 
-        <div className='delete-button' data-id={this.props.thisTool.id} onClick={() => {
-          this.refs.container.style.maxHeight = 0;
-          this.refs.container.style.opacity = 0;
-          this.refs.container.style.marginBottom = 0;
-          this.refs.container.style.padding = '0 .5em';
-          this.refs.container.style.borderBottom = '0px solid #fff';
-          setTimeout(() => this.props.onDeleteTool(this.props.thisTool.id), 300)
-        }}>✕</div>
+        <DeleteButton onClick={() => this.props.onDeleteTool(this.props.thisTool.id)}>✕</DeleteButton>
 
-        <textarea placeholder='Enter a note for this task...' className='note-input' ref='noteInput' onChange={this.handleInputChange} value={this.state.input} />
-      </div>
+        <NoteInput 
+          placeholder='Enter a note for this task...' 
+          ref='noteInput' 
+          onChange={this.handleInputChange} 
+          value={this.state.input} 
+        />
+        
+      </ToolContainer>
     )
   }
 }
 
-export default NoteTool;
+const NoteInput = styled.textarea`
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-bottom: 3px solid #fff;
+  line-height: 1.5em;
+  resize: vertical;
+  min-height: 2em;
+  font-size: .9em;
+  transition: border .3s;
+  padding: .5em;
+
+  &:hover {
+    border-bottom: 3px solid var(--grey);
+  }
+
+  &:focus {
+    outline: none;
+    border-bottom: 3px solid var(--babyblue);
+  }
+`;

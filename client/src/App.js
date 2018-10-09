@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import './app.css';
 import TaskInput from './Components/TaskInput';
 import ProjectInput from './Components/ProjectInput';
@@ -8,7 +7,7 @@ import Sidebar from './Components/Sidebar';
 
 // main App component contains all state and overarching functions
 
-class App extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
 
@@ -20,6 +19,10 @@ class App extends Component {
       expressTest: [],
       projects: [
         {
+          name: 'Unsorted Tasks',
+          id: 0,
+        },
+        {
           name: 'Sample Project',
           id: this.chinguDemoId,
         }
@@ -28,14 +31,14 @@ class App extends Component {
         {
           name: 'This is a task without a project, it is unsorted',
           id: this.uuidv4(),
-          project: '',
+          project: 0,
           selected: false,
           tools: [],
         },
         {
           name: 'Try to mark a task as completed by using the check box to the left',
           id: this.uuidv4(),
-          project: '',
+          project: 0,
           selected: false,
           tools: [],
         },
@@ -69,35 +72,25 @@ class App extends Component {
         },
       ]
     }
-
-    // THIS BINDINGS
-    this.handleSelectTask = this.handleSelectTask.bind(this);
-    this.handleAddTool = this.handleAddTool.bind(this);
-    this.handleDeleteTool = this.handleDeleteTool.bind(this);
-    this.handleAddProject = this.handleAddProject.bind(this);
-    this.handleDeleteProject = this.handleDeleteProject.bind(this);
-    this.handleAddTask = this.handleAddTask.bind(this);
-    this.handleDeleteTask = this.handleDeleteTask.bind(this);
-    this.handleMoveTask = this.handleMoveTask.bind(this);
   }
 
   // LIFE CYCLE EVENTS
 
   // load local storage state, if any
   componentDidMount() {
-    if (localStorage.lucidState) this.setState(JSON.parse(localStorage.getItem('lucidState')));
+    // if (localStorage.lucidState) this.setState(JSON.parse(localStorage.getItem('lucidState')));
 
     fetch('/api')
       .then(res => res.json())
-      .then(expressTest => this.setState({ expressTest }, console.log(expressTest)));
+      .then(expressTest => this.setState({ expressTest }, console.log('Express test...', expressTest)));
   }
 
-  componentDidUpdate() {
+  componentDidUpdate = () => {
     localStorage.setItem('lucidState', JSON.stringify(this.state));
   }
 
   // toggles whether the task passed in is selected, and deselects all other tasks
-  handleSelectTask(e) {
+  handleSelectTask = (e) => {
     const tasks = [...this.state.tasks];
     tasks.forEach(task => {
       task.id === e.target.dataset.id
@@ -108,7 +101,7 @@ class App extends Component {
   }
 
   // adds a tool to selected task
-  handleAddTool(taskID, toolName) {
+  handleAddTool = (taskID, toolName) => {
     const tasks = [...this.state.tasks];
     if (toolName === 'PomodoroTool' || toolName === 'NoteTool' || toolName === 'TodoTool') {
       tasks.forEach(task => {
@@ -122,7 +115,7 @@ class App extends Component {
   }
 
   // deletes the tool with the id passed in from the selected task
-  handleDeleteTool(toolId) {
+  handleDeleteTool = (toolId) => {
     const tasks = [...this.state.tasks];
     tasks.forEach(task => {
       if (task.selected) {
@@ -138,7 +131,7 @@ class App extends Component {
   }
 
   // adds a new empty project to the list
-  handleAddProject(e, input) {
+  handleAddProject = (e, input) => {
     e.preventDefault();
     if (input === "") {
       return;
@@ -152,7 +145,7 @@ class App extends Component {
   }
 
   // removes a project and all of its contained tasks from the list
-  handleDeleteProject(projectId) {
+  handleDeleteProject = (projectId) => {
     // remove project
     const projects = [...this.state.projects];
     const selectedProject = projects.filter(project => project.id === projectId);
@@ -172,7 +165,7 @@ class App extends Component {
   }
 
   // deletes a task from the list
-  handleDeleteTask(taskId) {
+  handleDeleteTask = (taskId) => {
     const tasks = [...this.state.tasks];
     const selectedTask = tasks.filter(task => task.id === taskId);
     const index = tasks.indexOf(selectedTask[0]);
@@ -201,7 +194,7 @@ class App extends Component {
 
   // CURRENTLY DISCONNECTED
   // when a task is moved (dragged), state should reflect this
-  handleMoveTask(taskId, projectId) {
+  handleMoveTask = (taskId, projectId) => {
     const tasks = [...this.state.tasks];
     tasks.forEach(task => {
       if (task.id === taskId) task.project = projectId;
@@ -236,5 +229,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;
