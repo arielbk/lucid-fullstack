@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import TasksContext from '../TasksContext';
 
 export default class TaskInput extends Component {
   state = {
@@ -15,9 +16,11 @@ export default class TaskInput extends Component {
   }
 
   render() { return (
+    <TasksContext.Consumer>
+      {context => (
       <form onSubmit={(e) => {
         this.setState({ inputValue: '' })
-        this.props.onAddTask(e, this.state.inputValue);
+        context.onAddTask(e, this.state.inputValue);
       }}>
         <MainInput 
           onChange={this.handleInputChange} 
@@ -27,6 +30,8 @@ export default class TaskInput extends Component {
           placeholder="Add Task" 
         />
       </form>
+      )}
+    </TasksContext.Consumer>
     )}
 }
 

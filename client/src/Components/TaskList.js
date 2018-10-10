@@ -1,112 +1,83 @@
 import React, { Component, Fragment } from 'react';
+import TasksContext from '../TasksContext';
 import Modal from './Modal';
 import { Toggle } from '../Utilities';
-
 import styled from 'styled-components';
+import ProjectAddTask from './ProjectAddTask';
 
 // controls rendering and animation for list of projects and tasks
 export default class TaskList extends Component {
   render() {
     return (
-    <Fragment>
-    {this.props.projects.map(project => {
-      return (
-        <ProjectGroup ref={project.id} key={project.id}>
-          <h3>
-            {project.name}
-          </h3>
+    <TasksContext.Consumer>
+      {context => (
 
-          <ProjectAddTaskButton>
-            +
-          </ProjectAddTaskButton>
+        <Fragment>
+          {context.state.projects.map(project => {
+            return (
+              <ProjectGroup key={project.id}>
+                <h3>
+                  {project.name}
+                </h3>
+      
+                <ProjectAddTaskButton>
+                  +
+                </ProjectAddTaskButton>
+      
+              {/* Toggles delete modal component (except for unsorted tasks) */}
+              {project.id !== 0 && (
+                <Toggle>
+                  {({on, toggle}) => (
+                    <Fragment>
+                      <DeleteButton onClick={toggle}>✕</DeleteButton>
+                      <Modal toggle={toggle} on={on} onDelete={() => {context.onDeleteProject(project.id); toggle()}}>
+                        Are you sure you want to delete the project, {project.name}?
+                      </Modal>
+                    </Fragment>
+                  )}
+                </Toggle>
+              )}
+      
+                <ProjectAddTask project={project} />
+      
+                <ProjectTasks data-id={project.id}>
+                  {context.state.tasks.map(task => (
+                    task.project === project.id && (
+                      <li key={task.id} data-id={task.id}>
+                        
+                        <input type="checkbox" />
+                        <CheckTask />
+      
+                        <span className="task-item" onClick={context.onSelectTask} data-id={task.id}>
+                          {task.name}
+                        </span>
+      
+                        {/* Toggles delete modal component */}
+                        <Toggle>
+                          {({on, toggle}) => (
+                            <Fragment>
+                              <DeleteButton onClick={toggle}>✕</DeleteButton>
+                              <Modal toggle={toggle} on={on} onDelete={() => {context.onDeleteTask(task.id); toggle()}}>
+                                Are you sure you want to delete the task, {task.name}?
+                              </Modal>
+                            </Fragment>
+                          )}
+                        </Toggle>
 
-        {/* Toggles delete modal component (except for unsorted tasks) */}
-        {project.id !== 0 && (
-          <Toggle>
-            {({on, toggle}) => (
-              <Fragment>
-                <DeleteButton onClick={toggle}>✕</DeleteButton>
-                <Modal toggle={toggle} on={on} onDelete={() => {this.props.onDeleteProject(project.id); toggle()}}>
-                  Are you sure you want to delete the project, {project.name}?
-                </Modal>
-              </Fragment>
-            )}
-          </Toggle>
-        )}
+                        <TaskUnderline selected={task.selected}/>
+                      </li>
+                    )
+                  ))}
+                </ProjectTasks>
+              </ProjectGroup>
+            )
+          })}
 
-          <ProjectAddTask onProjectAddTask={this.props.onProjectAddTask} project={project} />
-
-          <ProjectTasks ref={`${project.id}-list`} data-id={project.id}>
-            {this.props.tasks.map(task => {
-              if (task.project === project.id) { 
-                return (
-                <li ref={task.id} key={task.id} data-id={task.id}>
-                  
-                  <input type="checkbox" />
-                  <CheckTask />
-
-                  <span className="task-item" onClick={this.props.onSelectTask} data-id={task.id}>
-                    {task.name}
-                  </span>
-
-                  {/* Toggles delete modal component */}
-                  <Toggle>
-                    {({on, toggle}) => (
-                      <Fragment>
-                        <DeleteButton onClick={toggle}>✕</DeleteButton>
-                        <Modal toggle={toggle} on={on} onDelete={() => {this.props.onDeleteTask(task.id); toggle()}}>
-                          Are you sure you want to delete the task, {task.name}?
-                        </Modal>
-                      </Fragment>
-                    )}
-                  </Toggle>
-
-                  <TaskUnderline selected={task.selected}/>
-
-                </li>
-              )} else {
-                return '';
-              }
-            })}
-          </ProjectTasks>
-        </ProjectGroup>
-      )
-    })}
-
-    </Fragment>
+        </Fragment>
+      )}
+    </TasksContext.Consumer>
   )}
 }
-
-class ProjectAddTask extends Component {
-  state = {
-    input: '',
-  }
-
-  // controlled form input for adding task directly to a project
-  handleChange = e => {
-    this.setState({ input: e.target.value });
-  }
-
-  render() { 
-    const { project } = this.props;
-    return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          this.props.onProjectAddTask(e, this.state.input, project.id);
-          this.setState({ projectAddTaskInput: '' });
-        }}
-      >
-        <ProjectAddTaskField 
-          type="text"
-          value={this.state.projectAddTaskInput} 
-          onChange={this.handleChange} 
-          placeholder="Enter a task name"
-        />
-      </form>
-    )}
-}
-
 
 const ProjectGroup = styled.div`
   color: var(--darkblue);
@@ -180,23 +151,6 @@ const ProjectAddTaskButton = styled.div`
     cursor: pointer;
     color: var(--green);
     opacity: 1;
-  }
-`;
-
-const ProjectAddTaskField = styled.input`
-  margin: 1em 0 0 1em;
-  width: 100%;
-  font-size: 1em;
-  border: none;
-  border-bottom: 3px solid #fff;
-  padding: .3em .5em;
-  background: var(--lightgrey);
-
-  &:focus {
-    outline: none;
-    border-bottom: 3px solid var(--babyblue);
-    background: #fff;
-    border-radius: 0;
   }
 `;
 

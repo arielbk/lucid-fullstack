@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PomodoroTool from './PomodoroTool';
 import NoteTool from './NoteTool';
+import TasksContext from '../TasksContext';
 import styled from 'styled-components';
 
 // sidebar to display tools for a selected timer
@@ -9,40 +10,46 @@ export default class Sidebar extends Component {
     showToolOptions: true,
   }
 
-  render() { 
+  render() {
     return (
-    <StyledSidebar>
-        {!this.props.selectedTask && <SideInfo>Click a task to reveal tools</SideInfo>}
-        {this.props.selectedTask && this.props.selectedTask.tools && this.props.selectedTask.tools.map(tool => {
-          if (tool.name === 'PomodoroTool') {
-            return (<PomodoroTool key={tool.id} thisTool={tool} onDeleteTool={this.props.onDeleteTool} />)
-          } else if (tool.name === 'NoteTool') {
-            return (<NoteTool key={tool.id} thisTool={tool} onDeleteTool={this.props.onDeleteTool} />)
-          }
-          return '';
-        })}
-        {this.props.selectedTask &&
-          (<AddToolField 
-            showToolOptions={this.state.showToolOptions}
-            onClick={() => this.setState({ showToolOptions: !this.state.showToolOptions })}
-          >
-            <AddToolTitle>Add Tool</AddToolTitle>
-
-            <AddToolOption 
-              onClick={() => this.props.onAddTool(this.props.selectedTask.id, 'PomodoroTool')}
-            >
-              Pomodoro Timer
-            </AddToolOption>
-
-            <AddToolOption 
-              onClick={() => this.props.onAddTool(this.props.selectedTask.id, 'NoteTool')}
-            >
-              Note
-            </AddToolOption>
-
-          </AddToolField>)
-        }
-    </StyledSidebar>
+      <TasksContext.Consumer>
+        {context => {
+          const selectedTask = context.state.tasks.filter(task => task.selected)[0];
+          return (
+            <StyledSidebar>
+              {!selectedTask && <SideInfo>Click a task to reveal tools</SideInfo>}
+              {selectedTask && selectedTask.tools && selectedTask.tools.map(tool => {
+                if (tool.name === 'PomodoroTool') {
+                  return (<PomodoroTool key={tool.id} thisTool={tool} onDeleteTool={context.onDeleteTool} />)
+                } else if (tool.name === 'NoteTool') {
+                  return (<NoteTool key={tool.id} thisTool={tool} onDeleteTool={context.onDeleteTool} />)
+                }
+                return '';
+              })}
+              {selectedTask &&
+                (<AddToolField 
+                  showToolOptions={this.state.showToolOptions}
+                  onClick={() => this.setState({ showToolOptions: !this.state.showToolOptions })}
+                >
+                  <AddToolTitle>Add Tool</AddToolTitle>
+      
+                  <AddToolOption 
+                    onClick={() => context.onAddTool(selectedTask.id, 'PomodoroTool')}
+                  >
+                    Pomodoro Timer
+                  </AddToolOption>
+      
+                  <AddToolOption 
+                    onClick={() => context.onAddTool(selectedTask.id, 'NoteTool')}
+                  >
+                    Note
+                  </AddToolOption>
+      
+                </AddToolField>)
+              }
+            </StyledSidebar>
+          )}}
+      </TasksContext.Consumer>
   )}
 }
 

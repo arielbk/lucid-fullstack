@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import TasksContext from '../TasksContext';
 
 export default class ProjectInput extends Component {
   state = {
@@ -15,21 +16,23 @@ export default class ProjectInput extends Component {
   }
 
   render() { return (
-    <form onSubmit={e => {
-      this.props.onAddProject(e, this.state.inputValue);
-      this.refs.projectInput.blur();
-      this.setState({ inputValue: '' });
-    }}>
-      <div style={{position: 'relative'}}>
-        <AddProjectField
-          onBlur={this.handleBlur} 
-          ref='projectInput' 
-          placeholder='Add Project' 
-          value={this.state.inputValue} 
-          onChange={ this.handleInputChange } 
-        />
-      </div>
-    </form>
+    <TasksContext.Consumer>
+      {context => (
+        <form onSubmit={e => {
+          context.onAddProject(e, this.state.inputValue);
+          this.setState({ inputValue: '' });
+        }}>
+          <div style={{position: 'relative'}}>
+            <AddProjectField
+              onBlur={this.handleBlur} 
+              placeholder='Add Project' 
+              value={this.state.inputValue} 
+              onChange={ this.handleInputChange } 
+            />
+          </div>
+        </form>
+      )}
+    </TasksContext.Consumer>
   )}
 }
 
