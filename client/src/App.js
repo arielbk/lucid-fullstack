@@ -6,7 +6,6 @@ import TaskList from './Components/TaskList';
 import Sidebar from './Components/Sidebar';
 
 // main App component contains all state and overarching functions
-
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -174,7 +173,7 @@ export default class App extends Component {
   }
 
   // adds a new task to the top of the list
-  handleAddTask(e, taskName, projectId = '') {
+  handleAddTask = (e, taskName, projectId = 0) => {
     e.preventDefault();
     if (taskName === "") {
       return;

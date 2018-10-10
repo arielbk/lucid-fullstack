@@ -1,51 +1,47 @@
 import React, { Component } from 'react';
+import { Portal } from '../Utilities';
 import styled from 'styled-components';
 
 export default class Modal extends Component {
 
   render() {
+    const { children, toggle, on, onDelete } = this.props;
     return (
-    <ModalOverlay onClick={
-      (e) => e.target.className === 'modal-overlay' ? this.props.onToggle() : ''}
-    >
+    <Portal>
+      { on && (
+      <ModalWrapper>
 
-      <ModalContent>
-        Are you sure you want to delete the {this.props.taskOrProject} ‘{this.props.target.name}’{
-          this.props.taskOrProject === 'project' && ', and all of its tasks'
-        }?
-        
-        <ModalButtons>
-          <ModalButtonCancel onClick={this.props.onToggle}>Cancel</ModalButtonCancel>
-          <ModalButtonDelete onClick={() => this.props.onDelete(this.props.taskOrProject, this.props.target)}>Delete</ModalButtonDelete>
-        </ModalButtons>
+        <ModalContent>
+          {children}
+          <ModalButtons>
+            <ModalButtonCancel onClick={toggle}>Cancel</ModalButtonCancel>
+            <ModalButtonDelete onClick={onDelete}>Delete</ModalButtonDelete>
+          </ModalButtons>
+        </ModalContent>
 
-      </ModalContent>
-    </ModalOverlay>
+        <Background />
+      </ModalWrapper>
+      )}
+    </Portal>
   )}
 }
 
-const ModalOverlay = styled.div`
+const ModalWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  position: fixed;
-  overflow: hidden;
-  bottom: 0;
-  left: 0;
-  z-index: 10;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.2);
-  box-shadow: 0 36px 51px rgba(0,0,0,0.1);
-  transition: .3s;
 `;
 
 const ModalContent = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-60%);
   background: #fff;
   padding: 2em;
   border-top: 3px solid var(--grey);
   max-width: 500px;
+  z-index: 100;
 `;
 
 const ModalButtons = styled.div`
@@ -94,4 +90,13 @@ const ModalButtonDelete = styled(ModalButton)`
     opacity: 1;
     background: #d00;
   }
+`;
+
+const Background = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
 `;

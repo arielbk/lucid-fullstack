@@ -1,16 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import Modal from './Modal';
+import { Toggle } from '../Utilities';
+
 import styled from 'styled-components';
 
 // controls rendering and animation for list of projects and tasks
 export default class TaskList extends Component {
   state = {
     projectAddTaskInput: '',
-    modal: {
-      show: false,
-      taskOrProject: '',
-      target: {},
-    }
+    showModal: false,
   }
 
   // controlled form input for adding task directly to a project
@@ -18,13 +16,9 @@ export default class TaskList extends Component {
     this.setState({ projectAddTaskInput: e.target.value });
   }
 
-  toggleModal = (taskOrProject = '', target = '') => {
+  toggleModal = () => {
     this.setState({ 
-      modal: { 
-        show: !this.state.modal.show,
-        taskOrProject,
-        target
-      } 
+      showModal: !this.state.showModal
     })
   }
 
@@ -73,7 +67,19 @@ export default class TaskList extends Component {
             +
           </ProjectAddTaskButton>
 
-          <DeleteButton>✕</DeleteButton>
+        {/* Toggles delete modal component (except for unsorted tasks) */}
+        {project.id !== 0 && (
+          <Toggle>
+            {({on, toggle}) => (
+              <Fragment>
+                <DeleteButton onClick={toggle}>✕</DeleteButton>
+                <Modal toggle={toggle} on={on} onDelete={() => {this.props.onDeleteProject(project.id); toggle()}}>
+                  Are you sure you want to delete the project, {project.name}?
+                </Modal>
+              </Fragment>
+            )}
+          </Toggle>
+        )}
 
           <form ref={`${project.id}-form`}>
             <ProjectAddTaskField 
@@ -97,11 +103,17 @@ export default class TaskList extends Component {
                     {task.name}
                   </span>
 
-                  <DeleteButton 
-                    onClick={() => this.toggleModal('task', task)}
-                  >
-                    ✕
-                  </DeleteButton>
+                  {/* Toggles delete modal component */}
+                  <Toggle>
+                    {({on, toggle}) => (
+                      <Fragment>
+                        <DeleteButton onClick={toggle}>✕</DeleteButton>
+                        <Modal toggle={toggle} on={on} onDelete={() => {this.props.onDeleteTask(task.id); toggle()}}>
+                          Are you sure you want to delete the task, {task.name}?
+                        </Modal>
+                      </Fragment>
+                    )}
+                  </Toggle>
 
                   <TaskUnderline selected={task.selected}/>
 
@@ -114,10 +126,6 @@ export default class TaskList extends Component {
         </ProjectGroup>
       )
     })}
-
-    {this.state.modal.show &&
-      <Modal {...this.state.modal} onToggle={this.toggleModal} onDelete={this.onDelete}/>
-    }
 
     </Fragment>
   )}
