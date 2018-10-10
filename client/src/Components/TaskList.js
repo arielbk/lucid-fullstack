@@ -6,54 +6,7 @@ import styled from 'styled-components';
 
 // controls rendering and animation for list of projects and tasks
 export default class TaskList extends Component {
-  state = {
-    projectAddTaskInput: '',
-    showModal: false,
-  }
-
-  // controlled form input for adding task directly to a project
-  handleProjectAddTaskChange = e => {
-    this.setState({ projectAddTaskInput: e.target.value });
-  }
-
-  toggleModal = () => {
-    this.setState({ 
-      showModal: !this.state.showModal
-    })
-  }
-
-  onDelete = (taskOrProject, target) => {
-    this.toggleModal();
-
-    // styling changes common to projects and tasks
-    setTimeout(() => {
-      this.refs[target.id].style.maxHeight = 0;
-      this.refs[target.id].style.opacity = 0;
-    }, 0)
-
-    // styling changes and delete for projects
-    if (taskOrProject === 'project') {
-      setTimeout(() => {
-        this.refs[target.id].style.margin = '0 0 0 -1em';
-      }, 0);
-        
-      setTimeout(() => this.props.onDeleteProject(target.id), 300);
-    }
-
-    // styling changes and delete for tasks
-    if (taskOrProject === 'task') {
-      setTimeout(() => {
-        this.refs[target.id].style.marginBottom = 0;
-        this.refs[target.id].style.overflow = 'hidden';
-      }, 0)
-
-      setTimeout(() => this.props.onDeleteTask(target.id), 300);
-    }
-  }
-  
   render() {
-    console.log('Checking projects...', this.props.projects);
-
     return (
     <Fragment>
     {this.props.projects.map(project => {
@@ -81,14 +34,7 @@ export default class TaskList extends Component {
           </Toggle>
         )}
 
-          <form ref={`${project.id}-form`}>
-            <ProjectAddTaskField 
-              type="text"
-              value={this.state.projectAddTaskInput} 
-              onChange={this.handleProjectAddTaskChange} 
-              placeholder="Enter a task name"
-            />
-          </form>
+          <ProjectAddTask onProjectAddTask={this.props.onProjectAddTask} project={project} />
 
           <ProjectTasks ref={`${project.id}-list`} data-id={project.id}>
             {this.props.tasks.map(task => {
@@ -130,6 +76,37 @@ export default class TaskList extends Component {
     </Fragment>
   )}
 }
+
+class ProjectAddTask extends Component {
+  state = {
+    input: '',
+  }
+
+  // controlled form input for adding task directly to a project
+  handleChange = e => {
+    this.setState({ input: e.target.value });
+  }
+
+  render() { 
+    const { project } = this.props;
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          this.props.onProjectAddTask(e, this.state.input, project.id);
+          this.setState({ projectAddTaskInput: '' });
+        }}
+      >
+        <ProjectAddTaskField 
+          type="text"
+          value={this.state.projectAddTaskInput} 
+          onChange={this.handleChange} 
+          placeholder="Enter a task name"
+        />
+      </form>
+    )}
+}
+
 
 const ProjectGroup = styled.div`
   color: var(--darkblue);
