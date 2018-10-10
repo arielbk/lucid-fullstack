@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 
-// Make the tasks context
-
+// Create the tasks context
 const TasksContext = React.createContext();
 
 // Create the provider class, context's data lives here
 class TasksProvider extends Component {
-  // State goes here
   constructor(props) {
     super(props);
 
     this.uuidv4 = require('uuid/v4');
     // demo project id
-    this.chinguDemoId = this.uuidv4();
+    this.demoId = this.uuidv4();
 
     this.state = {
       expressTest: [],
@@ -23,7 +21,7 @@ class TasksProvider extends Component {
         },
         {
           name: 'Sample Project',
-          id: this.chinguDemoId,
+          id: this.demoId,
         }
       ],
       tasks: [
@@ -44,28 +42,28 @@ class TasksProvider extends Component {
         {
           name: 'These tasks below are part of the \'Sample Project\'',
           id: this.uuidv4(),
-          project: this.chinguDemoId,
+          project: this.demoId,
           selected: false,
           tools: [],
         },
         {
           name: 'Add another task to the project by pressing the plus icon next to a project',
           id: this.uuidv4(),
-          project: this.chinguDemoId,
+          project: this.demoId,
           selected: false,
           tools: [],
         },
         {
           name: 'Delete a task or an entire project by pressing the delete button to their right',
           id: this.uuidv4(),
-          project: this.chinguDemoId,
+          project: this.demoId,
           selected: false,
           tools: [],
         },
         {
           name: 'Click on a task text to interact with that tasks \'tools\'',
           id: this.uuidv4(),
-          project: this.chinguDemoId,
+          project: this.demoId,
           selected: false,
           tools: [],
         },
@@ -74,7 +72,7 @@ class TasksProvider extends Component {
   }
 
   // Interact with backend API (demo)
-  componentDidMount() {
+  componentDidMount = () => {
     fetch('/api')
       .then(res => res.json())
       .then(expressTest => this.setState({ expressTest }, console.log('Express test...', expressTest)));

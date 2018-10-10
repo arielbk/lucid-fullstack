@@ -8,7 +8,6 @@ export default class NoteTool extends Component {
     this.state = {
       input: '',
     }
-
   }
 
   handleInputChange = () => {

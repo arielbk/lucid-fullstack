@@ -8,9 +8,9 @@ export default class Modal extends Component {
     const { children, toggle, on, onDelete } = this.props;
     return (
     <Portal>
+
       { on && (
       <ModalWrapper>
-
         <ModalContent>
           {children}
           <ModalButtons>
@@ -18,10 +18,10 @@ export default class Modal extends Component {
             <ModalButtonDelete onClick={onDelete}>Delete</ModalButtonDelete>
           </ModalButtons>
         </ModalContent>
-
         <Background />
       </ModalWrapper>
       )}
+
     </Portal>
   )}
 }

@@ -1,3 +1,5 @@
+// Allows components to live outside of the main DOM node
+
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
 
